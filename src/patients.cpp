@@ -1,7 +1,6 @@
 #include "../include/patients.h"
 #include "../include/database.h"
 
-
 #include <iostream>
 #include <stdlib.h>
 #include <vector>
