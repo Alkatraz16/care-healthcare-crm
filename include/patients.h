@@ -7,7 +7,7 @@
 #include <sstream>
 
 struct Patient {
-   // int id; - temporarily remove id
+   int id;
    std::string name;
    std::string phone;
    std::string email;
