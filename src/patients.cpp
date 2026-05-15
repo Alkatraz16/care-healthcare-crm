@@ -59,22 +59,26 @@ void addPatientRecords() {
 }
 
 std::string serializePatientRecord(const Patient& p) {
-    return p.name + "|" + p.phone + "|" + p.email + "|" + std::to_string(p.age) + "|" + p.address;
+    return std::to_string(p.id) + "|" +
+           p.name                + "|" +
+           p.phone               + "|" +
+           p.email               + "|" +
+           std::to_string(p.age) + "|" +
+           p.address;
 }
+
 
 Patient deserializePatientRecord(const std::string& line) {
     Patient p;
-    std::string age;
-
+    std::string id, age;
     std::stringstream ss(line);
 
-    std::getline(ss, p.name, ',');
-    std::getline(ss, p.phone, ',');
-    std::getline(ss, p.email, ',');
-    std::getline(ss, age, ',');
-    std::getline(ss, p.address, '\n');
-
-    p.age = std::stoi(age);
+    std::getline(ss, id,      '|'); p.id  = std::stoi(id);
+    std::getline(ss, p.name,  '|');
+    std::getline(ss, p.phone, '|');
+    std::getline(ss, p.email, '|');
+    std::getline(ss, age,     '|'); p.age = std::stoi(age);
+    std::getline(ss, p.address);
 
     return p;
 }
@@ -96,8 +100,9 @@ void viewPatientRecords() {
               << std::setw(35) << "Email"
               << std::setw(10) << "Age"
               << std::setw(40) << "Address" << "\n";
+              std::cout << std::string(132, '-') << "\n";
               
-    for (Patient& p : patients) {
+    for (const Patient& p : patients) {
         std::cout << std::left
                   << std::setw(25) << p.name
                   << std::setw(20) << p.phone
