@@ -24,7 +24,7 @@ void printPatientManagementMenu() {
 }
 
 void addPatientRecords() {
-    Patient p;
+    Patient p;    
 
     system("cls");
 
@@ -44,13 +44,18 @@ void addPatientRecords() {
     std::getline(std::cin, p.email);
 
     std::cout << "Enter Age: ";
-    std::cin >> p.age;
+    while (!(std::cin >> p.age) || p.age <= 0) {
+        std::cout << "Invalid input. Enter a valid age: ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
     std::cin.ignore();
 
     std::cout << "Address: ";
     std::getline(std::cin, p.address);
 
     patients.push_back(p);
+    std::cout << "\nPatient added successfully.\n";
 }
 
 std::string serializePatientRecord(const Patient& p) {
