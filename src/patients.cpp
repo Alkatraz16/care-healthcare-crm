@@ -1,6 +1,7 @@
 #include "../include/patients.h"
 #include "../include/database.h"
 
+
 #include <iostream>
 #include <stdlib.h>
 #include <vector>
@@ -25,7 +26,8 @@ void printPatientManagementMenu() {
 
 void addPatientRecords() {
     Patient p;    
-
+    p.id = getNextId(patients, [](const Patient& p){ return p.id; });
+    
     system("cls");
 
     std::cout << "==================================\n";
