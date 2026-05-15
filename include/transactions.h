@@ -13,6 +13,8 @@ struct Transaction {
     std::string description;
 };      
 
+extern std::vector<Transaction> transactions;
+
 //menu
 void transactionManagement();
 
