@@ -1,11 +1,13 @@
 #include "../include/auth.h"
 #include "../include/patients.h"
 #include "../include/database.h"
+#include "../include/ui.h"
 
 #include <iostream>
 #include <limits>
 #include <stdlib.h>
 #include <functional>
+#include <conio.h>
 
 std::vector<User> users;
 User currentUser;
@@ -13,36 +15,46 @@ bool isLoggedIn = false;
 bool exitRequested = false;
 
 void login() {
-
-    std::cout << "================================================\n";
-    std::cout << "        CLINICAL ACTIVITY RECORDS ENGINE\n";
-    std::cout << "================================================\n";
-    std::cout << "1. Login as Staff\n";
-    std::cout << "2. Login as Patient\n";
-    std::cout << "3. Exit\n";
-    std::cout << ">> ";
-
     int choice;
-    std::cin >> choice;
-    if (std::cin.fail()) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-    std::cin.ignore();
+    char key;
+    int index = 0;
+    bool pressEnter = false;
+    bool redraw = true;
 
-    switch (choice) {
-        case 1:
-            staffLogin(); 
-            break;
-        case 2:
-            patientLogin();
-            break;
-        case 3: 
-            exitRequested = true;
-            return;
-        default:
-            std::cout << "Invalid input.\n";
-            login();
+    while (true) {
+        if (redraw) {
+            system("cls");
+            std::cout << CARE;
+            std::cout << loginMenuFrames[index];
+            redraw = false;
+        }
+
+        key = _getch();
+
+        if (key == 'w') {
+            index = (index == 0) ? 2 : index - 1;
+            redraw = true;
+        }
+        if (key == 's') {
+            index = (index + 1) % 3;
+            redraw = true;
+        }
+        if (key == '\r') {
+            pressEnter = true;
+            choice = index + 1;
+
+            switch (choice) {
+                case 1:
+                    staffLogin(); 
+                    break;
+                case 2:
+                    patientLogin();
+                    break;
+                case 3: 
+                    exitRequested = true;
+                    return;
+            }
+        }
     }
 }
 
