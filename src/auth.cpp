@@ -66,9 +66,7 @@ std::string hashPassword(const std::string& password) {
 void staffLogin() {
     system("cls");
 
-    std::cout << "================================\n";
-    std::cout << "         STAFF LOGIN\n";
-    std::cout << "================================\n";
+    std::cout << staffLoginHeader << "\n";
     std::cout << "Enter 'cancel' as username to go back.\n\n";
 
     while (true) {
@@ -119,9 +117,7 @@ void staffLogin() {
 void patientLogin() {
     system("cls");
 
-    std::cout << "================================\n";
-    std::cout << "        PATIENT LOGIN\n";
-    std::cout << "================================\n";
+    std::cout << patientLoginHeader << "\n";
     std::cout << "Enter 'cancel' as username to go back.\n\n";
 
     while (true) {
@@ -164,12 +160,6 @@ void patientLogin() {
                     break;
                 }
             }
-
-            std::cout << "================================\n";
-            std::cout << "     WELCOME, " << patientName << "\n";
-            std::cout << "================================\n";
-            std::cout << "Press enter to continue...";
-            std::cin.get();
             return;
         }
 

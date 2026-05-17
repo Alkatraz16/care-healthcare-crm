@@ -75,7 +75,8 @@ void adminMenu() {
         if (redraw) {
             system("cls");
             std::cout << mainMenu;
-            std::cout << adminMenuFrames[index];
+            std::cout << adminMenuFrames[index] << "\n";
+            std::cout << "Logged in as: " << currentUser.username << "(" << currentUser.role << ")\n";
             redraw = false;
         }
 
@@ -127,7 +128,8 @@ void staffMenu() {
         if (redraw) {
             system("cls");
             std::cout << mainMenu;
-            std::cout << staffMenuFrames[index];
+            std::cout << staffMenuFrames[index] << "\n";
+            std::cout << "Logged in as: " << currentUser.username << "(" << currentUser.role << ")\n";
             redraw = false;
         }
 
@@ -176,7 +178,8 @@ void patientMenu() {
         if (redraw) {
             system("cls");
             std::cout << mainMenu;
-            std::cout << patientMenuFrames[index];
+            std::cout << patientMenuFrames[index] << "\n";
+            std::cout << "Logged in as: " << currentUser.username << "(" << currentUser.role << ")\n";
             redraw = false;
         }
 
