@@ -6,6 +6,7 @@
 #include <limits>
 #include <stdlib.h>
 #include <functional>
+#include <sstream>
 
 std::vector<User> users;
 User currentUser;
@@ -13,40 +14,45 @@ bool isLoggedIn = false;
 bool exitRequested = false;
 
 void login() {
+    while (true) {
+        std::cout << "================================================\n";
+        std::cout << "        CLINICAL ACTIVITY RECORDS ENGINE\n";
+        std::cout << "================================================\n";
+        std::cout << "1. Login as Staff\n";
+        std::cout << "2. Login as Patient\n";
+        std::cout << "3. Exit\n";
+        std::cout << ">> ";
 
-    std::cout << "================================================\n";
-    std::cout << "        CLINICAL ACTIVITY RECORDS ENGINE\n";
-    std::cout << "================================================\n";
-    std::cout << "1. Login as Staff\n";
-    std::cout << "2. Login as Patient\n";
-    std::cout << "3. Exit\n";
-    std::cout << ">> ";
+        int choice;
+        std::cin >> choice;
 
-    int choice;
-    std::cin >> choice;
-    if (std::cin.fail()) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-    std::cin.ignore();
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Enter 1, 2, or 3.\n\n";
+            continue;
+        }
+        std::cin.ignore();
 
-    switch (choice) {
-        case 1:
-            staffLogin(); 
-            break;
-        case 2:
-            patientLogin();
-            break;
-        case 3: 
-            exitRequested = true;
-            return;
-        default:
-            std::cout << "Invalid input.\n";
-            login();
+        switch (choice) {
+            case 1:
+                staffLogin();
+                return;
+            case 2:
+                patientLogin();
+                return;
+            case 3:
+                exitRequested = true;
+                return;
+            default:
+                std::cout << "Invalid input. Enter 1, 2, or 3.\n\n";
+                break;
+        }
     }
 }
 
 std::string hashPassword(const std::string& password) {
+    if (password.empty()) return "";
     std::hash<std::string> hasher;
     return std::to_string(hasher(password));
 }
@@ -63,7 +69,12 @@ void staffLogin() {
         std::string username, password;
 
         std::cout << "Username: ";
-        std::cin >> username;
+        if (!(std::cin >> username)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Try again.\n\n";
+            continue;
+        }
 
         if (username == "cancel") {
             std::cout << "Login cancelled.\n";
@@ -71,15 +82,30 @@ void staffLogin() {
         }
 
         std::cout << "Password: ";
-        std::cin >> password;
+        if (!(std::cin >> password)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Try again.\n\n";
+            continue;
+        }
         std::cin.ignore();
+
+        if (password.empty()) {
+            std::cout << "Password cannot be empty. Try again.\n\n";
+            continue;
+        }
 
         std::string hashed = hashPassword(password);
 
         bool found = false;
         for (User& u : users) {
             if (u.username != username) continue;
-            if (u.role == "patient") continue;
+            if (u.role == "patient") {
+                std::cout << "This account is not a staff account. "
+                          << "Use patient login instead.\n\n";
+                found = true;
+                break;
+            }
 
             found = true;
 
@@ -116,7 +142,12 @@ void patientLogin() {
         std::string username, password;
 
         std::cout << "Username: ";
-        std::cin >> username;
+        if (!(std::cin >> username)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Try again.\n\n";
+            continue;
+        }
 
         if (username == "cancel") {
             std::cout << "Login cancelled.\n";
@@ -124,15 +155,30 @@ void patientLogin() {
         }
 
         std::cout << "Password: ";
-        std::cin >> password;
+        if (!(std::cin >> password)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Try again.\n\n";
+            continue;
+        }
         std::cin.ignore();
+
+        if (password.empty()) {
+            std::cout << "Password cannot be empty. Try again.\n\n";
+            continue;
+        }
 
         std::string hashed = hashPassword(password);
 
         bool found = false;
         for (User& u : users) {
             if (u.username != username) continue;
-            if (u.role != "patient") continue;
+            if (u.role != "patient") {
+                std::cout << "This account is not a patient account. "
+                          << "Use staff login instead.\n\n";
+                found = true;
+                break;
+            }
 
             found = true;
 
@@ -169,7 +215,7 @@ void patientLogin() {
 
 void seedAdminAccount() {
     User admin;
-    admin.id              = 1;
+    admin.id              = getNextId(users, [](const User& u){ return u.id; });
     admin.username        = "admin";
     admin.passwordHash    = hashPassword("admin123");
     admin.role            = "admin";
@@ -181,7 +227,7 @@ void seedAdminAccount() {
 
 void seedStaffAccount() {
     User staff;
-    staff.id              = 1;
+    staff.id              = getNextId(users, [](const User& u){ return u.id; });
     staff.username        = "staff";
     staff.passwordHash    = hashPassword("staff123");
     staff.role            = "staff";
@@ -193,7 +239,7 @@ void seedStaffAccount() {
 
 void seedPatientAccount() {
     User patient;
-    patient.id              = 1;
+    patient.id              = getNextId(users, [](const User& u){ return u.id; });
     patient.username        = "patient";
     patient.passwordHash    = hashPassword("patient123");
     patient.role            = "patient";
@@ -204,7 +250,11 @@ void seedPatientAccount() {
 }
 
 std::string serializeUser(const User& u) {
-    return std::to_string(u.id) + "|" + u.username + "|" + u.passwordHash + "|" + u.role + "|" + std::to_string(u.linkedPatientId);
+    return std::to_string(u.id)              + "|" +
+           u.username                         + "|" +
+           u.passwordHash                     + "|" +
+           u.role                             + "|" +
+           std::to_string(u.linkedPatientId);
 }
 
 User deserializeUser(const std::string& line) {
@@ -212,14 +262,16 @@ User deserializeUser(const std::string& line) {
     std::string id, linkedPatientId;
     std::stringstream ss(line);
 
-    std::getline(ss, id,              '|');
-    std::getline(ss, u.username,      '|');
-    std::getline(ss, u.passwordHash,  '|');
-    std::getline(ss, u.role,          '|');
-    std::getline(ss, linkedPatientId, '\n');
-
-    u.id              = std::stoi(id);
-    u.linkedPatientId = std::stoi(linkedPatientId);
+    try {
+        std::getline(ss, id,              '|'); u.id              = std::stoi(id);
+        std::getline(ss, u.username,      '|');
+        std::getline(ss, u.passwordHash,  '|');
+        std::getline(ss, u.role,          '|');
+        std::getline(ss, linkedPatientId, '\n'); u.linkedPatientId = std::stoi(linkedPatientId);
+    } catch (...) {
+        std::cerr << "Warning: Malformed user record skipped.\n";
+        u.id = -1;  // sentinel value
+    }
 
     return u;
 }
@@ -230,4 +282,11 @@ void saveUsers() {
 
 void loadUsers() {
     loadRecords<User>("data/users.csv", users, deserializeUser);
+
+    // remove malformed records
+    users.erase(
+        std::remove_if(users.begin(), users.end(),
+            [](const User& u){ return u.id == -1; }),
+        users.end()
+    );
 }
