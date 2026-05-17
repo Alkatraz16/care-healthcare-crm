@@ -138,7 +138,6 @@ std::vector<ReportTransaction> loadTransactions() {
 void waitForEnter() {
 	std::cout << "\nPress Enter to continue...";
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	std::cin.get();
 }
 
 void printReportHeader(const std::string& title) {
