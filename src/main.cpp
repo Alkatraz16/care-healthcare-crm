@@ -3,9 +3,12 @@
 #include "../include/transactions.h"
 #include "../include/auth.h"
 #include "../include/usermanagement.h"
+#include "../include/ui.h"
 
 #include <iostream>
 #include <limits>
+#include <conio.h>
+#include <windows.h>
 
 void printStaffMenu();
 void printAdminMenu();
@@ -18,6 +21,10 @@ void adminMenu();
 void patientMenu();
 
 int main() {
+    // For ASCII art compatability
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+
     loadUsers();
     loadPatientRecords();
     loadInteractionLogs();
@@ -49,6 +56,9 @@ int main() {
         if (currentUser.role == "patient") {
             patientMenu();
         }
+
+        isLoggedIn = false;
+        currentUser = User{};
     }
 
     return 0;
@@ -56,143 +66,149 @@ int main() {
 
 void adminMenu() {
     int choice;
-    do {
-        system("cls");
-        printAdminMenu();
+    char key;
+    int index = 0;
+    bool pressEnter = false;
+    bool redraw = true;
 
-        std::cin >> choice;
-
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while (true) {
+        if (redraw) {
+            system("cls");
+            std::cout << mainMenu;
+            std::cout << adminMenuFrames[index];
+            redraw = false;
         }
 
-        switch (choice) {
-            case 1:
-                patientManagementModule();
-                break;
-            case 2:                
-                transactionManagement();
-                break;
-            case 3:
-                interactionsModule();
-                break;
-            case 4:
-                reportsModule();
-                break;
-            case 5:
-                userManagementModule();
-                break;
-            case 6:
-                return;
-                break;
-            default:
-                std::cout << "Invalid option! Try again. (1-5)\n";
-                break;
+        key = _getch();
+
+        if (key == 'w') {
+            index = (index == 0) ? 5 : index - 1;
+            redraw = true;
         }
-    } while (choice != 6);
+        if (key == 's') {
+            index = (index + 1) % 6;
+            redraw = true;
+        }
+        if (key == '\r') {
+            pressEnter = true;
+            choice = index + 1;
+            switch (choice) {
+                case 1:
+                    patientManagementModule();
+                    break;
+                case 2:                
+                    transactionManagement();
+                    break;
+                case 3:
+                    interactionsModule();
+                    break;
+                case 4:
+                    reportsModule();
+                    break;
+                case 5:
+                    userManagementModule();
+                    break;
+                case 6:
+                    return;
+                    break;
+            }
+        }
+    }
 }
-
 
 void staffMenu() {
     int choice;
-    do {
-        system("cls");
-        printStaffMenu();
+    char key;
+    int index = 0;
+    bool pressEnter = false;
+    bool redraw = true;
 
-        std::cin >> choice;
-
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while (true) {
+        if (redraw) {
+            system("cls");
+            std::cout << mainMenu;
+            std::cout << staffMenuFrames[index];
+            redraw = false;
         }
 
-        switch (choice) {
-            case 1:
-                patientManagementModule();
-                break;
-            case 2:                
-                transactionManagement();
-                break;
-            case 3:
-                interactionsModule();
-                break;
-            case 4:
-                reportsModule();
-                break;
-            case 5:
-                return;
-                break;
-            default:
-                std::cout << "Invalid option! Try again. (1-5)\n";
-                break;
+        key = _getch();
+
+        if (key == 'w') {
+            index = (index == 0) ? 4 : index - 1;
+            redraw = true;
         }
-    } while (choice != 5);
+        if (key == 's') {
+            index = (index + 1) % 5;
+            redraw = true;
+        }
+        if (key == '\r') {
+            pressEnter = true;
+            choice = index + 1;
+            switch (choice) {
+                case 1:
+                    patientManagementModule();
+                    break;
+                case 2:                
+                    transactionManagement();
+                    break;
+                case 3:
+                    interactionsModule();
+                    break;
+                case 4:
+                    reportsModule();
+                    break;
+                case 5:
+                    return;
+                    break;
+            }
+        }
+    }
 }
 
 void patientMenu() {
     int choice;
-    do {
-        system("cls");
-        printPatientMenu();
+    char key;
+    int index = 0;
+    bool pressEnter = false;
+    bool redraw = true;
 
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while (true) {
+        if (redraw) {
+            system("cls");
+            std::cout << mainMenu;
+            std::cout << patientMenuFrames[index];
+            redraw = false;
         }
 
-        switch (choice) {
-            case 1: 
-                viewMyRecords();             
-                break;
-            case 2: 
-                viewMyTransactions();        
-                break;
-            case 3: 
-                viewMyInteractionLogs();     
-                break;
-            case 4: 
-                return;
-            default:
-                std::cout << "Invalid option!\n";
-                break;
+        key = _getch();
+
+        if (key == 'w') {
+            index = (index == 0) ? 3 : index - 1;
+            redraw = true;
         }
-    } while (choice != 4);
-}
-
-void printAdminMenu() {
-    std::cout << "=============================\n";
-    std::cout << "    HEALTHCARE CRM SYSTEM\n";
-    std::cout << "=============================\n";
-    std::cout << "1. Patient Management\n";
-    std::cout << "2. Transaction Management\n";
-    std::cout << "3. Interaction Logs\n";
-    std::cout << "4. Reports\n";
-    std::cout << "5. User Management\n";
-    std::cout << "6. Logout\n";
-}
-
-void printStaffMenu() {
-    std::cout << "=============================\n";
-    std::cout << "    HEALTHCARE CRM SYSTEM\n";
-    std::cout << "=============================\n";
-    std::cout << "1. Patient Management\n";
-    std::cout << "2. Transaction Management\n";
-    std::cout << "3. Interaction Logs\n";
-    std::cout << "4. Reports\n";
-    std::cout << "5. Logout\n";
-}
-
-void printPatientMenu() {
-    std::cout << "=============================\n";
-    std::cout << "    HEALTHCARE CRM SYSTEM\n";
-    std::cout << "=============================\n";
-    std::cout << "Welcome, " << currentUser.username << "\n\n";
-    std::cout << "1. View My Records\n";
-    std::cout << "2. View My Transactions\n";
-    std::cout << "3. View My Interaction Logs\n";
-    std::cout << "4. Logout\n";
+        if (key == 's') {
+            index = (index + 1) % 4;
+            redraw = true;
+        }
+        if (key == '\r') {
+            pressEnter = true;
+            choice = index + 1;
+            switch (choice) {
+                case 1: 
+                    viewMyRecords();             
+                    break;
+                case 2: 
+                    viewMyTransactions();        
+                    break;
+                case 3: 
+                    viewMyInteractionLogs();     
+                    break;
+                case 4: 
+                    return;
+                    break;
+            }
+        }
+    }
 }
 
 void patientManagementModule() {
