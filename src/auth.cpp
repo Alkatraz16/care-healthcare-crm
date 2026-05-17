@@ -46,9 +46,11 @@ void login() {
             switch (choice) {
                 case 1:
                     staffLogin(); 
+                    if (isLoggedIn) return;
                     break;
                 case 2:
                     patientLogin();
+                    if (isLoggedIn) return;
                     break;
                 case 3: 
                     exitRequested = true;
