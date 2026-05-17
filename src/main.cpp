@@ -216,42 +216,56 @@ void patientMenu() {
 
 void patientManagementModule() {
     int choice;
+    char key;
+    int index = 0;
+    bool pressEnter = false;
+    bool redraw = true;
 
-    do {
-        printPatientManagementMenu();
-
-        std::cin >> choice;
-
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while (true) {
+        if (redraw) {
+            system("cls");
+            std::cout << patientManagementModuleHeader;
+            std::cout << patientManagementMenuFrames[index] << "\n";
+            std::cout << "Logged in as: " << currentUser.username << "(" << currentUser.role << ")\n";
+            redraw = false;
         }
 
-        switch (choice) {
-            case 1:
-                addPatientRecords();
-                savePatientRecords();
-                break;
-            case 2:
-                viewPatientRecords();
-                break;
-            case 3:
-                updatePatientRecord();
-                break;
-            case 4:
-                deletePatientRecord();
-                break;
-            case 5:
-                searchPatientRecord();
-                break;
-            case 6:
-                std::cout << "Going back to main menu...\n";
-                break;
-            default:
-                std::cout << "Invalid option! Try again. (1-6)\n";
-                break;
+        key = _getch();
+
+        if (key == 'w') {
+            index = (index == 0) ? 5 : index - 1;
+            redraw = true;
         }
-    } while (choice != 6);
+        if (key == 's') {
+            index = (index + 1) % 6;
+            redraw = true;
+        }
+        if (key == '\r') {
+            pressEnter = true;
+            choice = index + 1;
+            switch (choice) {
+                case 1:
+                    addPatientRecords();
+                    savePatientRecords();
+                    break;
+                case 2:
+                    viewPatientRecords();
+                    break;
+                case 3:
+                    updatePatientRecord();
+                    break;
+                case 4:
+                    deletePatientRecord();
+                    break;
+                case 5:
+                    searchPatientRecord();
+                    break;
+                case 6:
+                    return;
+                    break;
+            }
+        }
+    }
 }
 
 void interactionsModule() {
