@@ -156,8 +156,12 @@ static bool containsIgnoreCase(const std::string& text, const std::string& query
 void searchTransactions() {
     if (transactions.empty()) {
         std::cout << "\nNo transactions found.\n";
+        std::cout << "Press enter to continue...";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return;
     }
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ADD THIS
 
     std::cout << "\nEnter search term (service type, description, date, patient name): ";
     std::string query;
