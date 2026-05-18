@@ -1,3 +1,5 @@
+#include <ui.h>
+
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
@@ -8,6 +10,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <conio.h>
 
 struct ReportTransaction {
 	int id;
@@ -153,6 +156,7 @@ void showTotalSales(const std::vector<ReportTransaction>& transactions) {
 		totalSales += t.amount;
 	}
 
+	system("cls");
 	printReportHeader("            TOTAL SALES");
 	std::cout << "Total Sales: PHP " << std::fixed << std::setprecision(2) << totalSales << "\n";
 }
@@ -173,6 +177,7 @@ void showTopPatientsBySpending(const std::vector<ReportTransaction>& transaction
 				  return a.second > b.second;
 			  });
 
+	system("cls");
 	printReportHeader("      TOP PATIENTS BY SPENDING");
 
 	if (rankedPatients.empty()) {
@@ -196,6 +201,7 @@ void showTopPatientsBySpending(const std::vector<ReportTransaction>& transaction
 }
 
 void showTransactionCount(const std::vector<ReportTransaction>& transactions) {
+	system("cls");
 	printReportHeader("    TOTAL NUMBER OF TRANSACTIONS");
 	std::cout << "Total Transactions: " << transactions.size() << "\n";
 }
@@ -203,47 +209,55 @@ void showTransactionCount(const std::vector<ReportTransaction>& transactions) {
 }  // namespace
 
 void reportsModule() {
-	int choice;
+    int choice;
+    char key;
+    int index = 0;
+    bool pressEnter = false;
+    bool redraw = true;
 
-	do {
-		std::vector<ReportTransaction> transactions = loadTransactions();
-		std::unordered_map<int, std::string> patientNames = loadPatientNamesById();
+    while (true) {
+        if (redraw) {
+            system("cls");
+            std::cout << reportsMenuHeader;
+            std::cout << reportsMenuFrames[index] << "\n";
+            redraw = false;
+        }
 
-		std::cout << "\n=============================\n";
-		std::cout << "        REPORTS MENU\n";
-		std::cout << "=============================\n";
-		std::cout << "1. Total Sales\n";
-		std::cout << "2. Top Patients by Spending\n";
-		std::cout << "3. Number of Transactions\n";
-		std::cout << "4. Back\n";
-		std::cout << "Enter choice: ";
+        key = _getch();
 
-		std::cin >> choice;
-		if (std::cin.fail()) {
-			std::cin.clear();
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			choice = 0;
-		}
+        if (key == 'w') {
+            index = (index == 0) ? 4 : index - 1;
+            redraw = true;
+        }
+        if (key == 's') {
+            index = (index + 1) % 4;
+            redraw = true;
+        }
+        if (key == '\r') {
+            pressEnter = true;
+            choice = index + 1;
 
-		switch (choice) {
-			case 1:
-				showTotalSales(transactions);
-				waitForEnter();
-				break;
-			case 2:
-				showTopPatientsBySpending(transactions, patientNames);
-				waitForEnter();
-				break;
-			case 3:
-				showTransactionCount(transactions);
-				waitForEnter();
-				break;
-			case 4:
-				std::cout << "Returning to main menu...\n";
-				break;
-			default:
-				std::cout << "Invalid option! Try again. (1-4)\n";
-				break;
-		}
-	} while (choice != 4);
+			std::vector<ReportTransaction> transactions = loadTransactions();
+			std::unordered_map<int, std::string> patientNames = loadPatientNamesById();
+
+			switch (choice) {
+				case 1:
+					showTotalSales(transactions);
+					waitForEnter();
+					break;
+				case 2:
+					showTopPatientsBySpending(transactions, patientNames);
+					waitForEnter();
+					break;
+				case 3:
+					showTransactionCount(transactions);
+					waitForEnter();
+					break;
+				case 4:
+					return;
+					break;
+			}
+            redraw = true;
+        }
+    }
 }
