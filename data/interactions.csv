@@ -1,0 +1,60 @@
+1|1|Clinic Visit|Patient came in for regular checkup|2026-01-05|Mon Jan  5 08:30:00 2026
+2|1|Follow-up Call|Called to check on recovery progress|2026-01-12|Mon Jan 12 10:00:00 2026
+3|1|Lab Results Notification|Informed patient of normal lab results|2026-01-19|Mon Jan 19 09:00:00 2026
+4|2|Appointment Reminder|Reminded patient of upcoming lab schedule|2026-01-07|Wed Jan  7 09:00:00 2026
+5|2|Clinic Visit|Patient came in for lab test|2026-01-14|Wed Jan 14 08:30:00 2026
+6|2|Patient Inquiry|Patient called asking about allergy medication|2026-01-21|Wed Jan 21 14:00:00 2026
+7|3|Follow-up Call|Called to check on recovery progress|2026-01-09|Fri Jan  9 10:15:00 2026
+8|3|Clinic Visit|Patient came in for follow-up visit|2026-01-16|Fri Jan 16 08:00:00 2026
+9|3|Appointment Rescheduled|Patient requested reschedule for checkup|2026-01-23|Fri Jan 23 09:00:00 2026
+10|4|Lab Results Notification|Informed patient of normal lab results|2026-01-11|Sun Jan 11 11:00:00 2026
+11|4|Clinic Visit|Patient came in for physical therapy|2026-01-18|Sun Jan 18 08:30:00 2026
+12|4|Payment Reminder|Reminded patient of outstanding balance|2026-01-25|Sun Jan 25 11:00:00 2026
+13|5|Clinic Visit|Patient came in for initial consultation|2026-01-15|Thu Jan 15 08:00:00 2026
+14|5|Follow-up Call|Called to check on asthma management|2026-01-22|Thu Jan 22 10:00:00 2026
+15|5|Payment Reminder|Reminded of outstanding consultation fee|2026-01-29|Thu Jan 29 11:00:00 2026
+16|6|Appointment Reminder|Reminded patient of ECG schedule|2026-01-17|Sat Jan 17 09:30:00 2026
+17|6|Clinic Visit|Patient came in for ECG test|2026-01-24|Sat Jan 24 08:30:00 2026
+18|6|Lab Results Notification|Notified patient of ECG results|2026-01-31|Sat Jan 31 11:00:00 2026
+19|7|Clinic Visit|Annual physical exam completed|2026-01-20|Tue Jan 20 10:00:00 2026
+20|7|Follow-up Call|Called regarding physical exam results|2026-01-27|Tue Jan 27 10:00:00 2026
+21|7|Appointment Reminder|Reminded of next annual checkup|2026-02-03|Tue Feb  3 09:00:00 2026
+22|8|Follow-up Call|Called regarding fever and medication|2026-01-23|Fri Jan 23 14:00:00 2026
+23|8|Clinic Visit|Patient came in for follow-up on fever|2026-01-30|Fri Jan 30 08:30:00 2026
+24|8|Lab Results Notification|Informed of blood test results|2026-02-06|Fri Feb  6 11:00:00 2026
+25|9|Payment Reminder|Reminded patient of outstanding balance|2026-01-24|Sat Jan 24 11:00:00 2026
+26|9|Clinic Visit|Patient came in for wound dressing|2026-01-31|Sat Jan 31 08:30:00 2026
+27|9|Follow-up Call|Called to check on wound healing|2026-02-07|Sat Feb  7 10:00:00 2026
+28|10|Lab Results Notification|Notified patient of lipid profile results|2026-01-29|Thu Jan 29 09:00:00 2026
+29|10|Clinic Visit|Patient came in for follow-up consultation|2026-02-05|Thu Feb  5 08:30:00 2026
+30|10|Appointment Reminder|Reminded of next lipid profile test|2026-02-12|Thu Feb 12 09:00:00 2026
+31|11|Follow-up Call|Called to check blood pressure readings|2026-02-02|Mon Feb  2 10:00:00 2026
+32|11|Clinic Visit|Patient came in for hypertension checkup|2026-02-09|Mon Feb  9 08:30:00 2026
+33|11|Lab Results Notification|Informed of blood pressure monitoring results|2026-02-16|Mon Feb 16 11:00:00 2026
+34|12|Appointment Reminder|Reminded of next prenatal checkup|2026-02-04|Wed Feb  4 09:00:00 2026
+35|12|Clinic Visit|Patient came in for prenatal checkup|2026-02-11|Wed Feb 11 08:30:00 2026
+36|12|Follow-up Call|Called to check on prenatal progress|2026-02-18|Wed Feb 18 10:00:00 2026
+37|13|Lab Results Notification|Informed of thyroid test results|2026-02-09|Mon Feb  9 11:00:00 2026
+38|13|Clinic Visit|Patient came in for thyroid follow-up|2026-02-16|Mon Feb 16 08:30:00 2026
+39|13|Appointment Reminder|Reminded of next thyroid test|2026-02-23|Mon Feb 23 09:00:00 2026
+40|14|Follow-up Call|Called regarding blood sugar levels|2026-02-11|Wed Feb 11 10:00:00 2026
+41|14|Clinic Visit|Patient came in for diabetes management|2026-02-18|Wed Feb 18 08:30:00 2026
+42|14|Lab Results Notification|Informed of HbA1c test results|2026-02-25|Wed Feb 25 11:00:00 2026
+43|15|Clinic Visit|Patient came in for IV therapy session|2026-02-12|Thu Feb 12 08:30:00 2026
+44|15|Follow-up Call|Called to check on IV therapy progress|2026-02-19|Thu Feb 19 10:00:00 2026
+45|15|Payment Reminder|Reminded of outstanding IV therapy balance|2026-02-26|Thu Feb 26 11:00:00 2026
+46|16|Appointment Reminder|Reminded of upcoming consultation|2026-02-03|Tue Feb  3 09:00:00 2026
+47|16|Clinic Visit|Patient came in for consultation|2026-02-10|Tue Feb 10 08:30:00 2026
+48|16|Follow-up Call|Called to check on consultation follow-up|2026-02-17|Tue Feb 17 10:00:00 2026
+49|17|Clinic Visit|Patient came in for check-up|2026-02-05|Thu Feb  5 08:30:00 2026
+50|17|Lab Results Notification|Informed of check-up results|2026-02-12|Thu Feb 12 11:00:00 2026
+51|17|Payment Reminder|Reminded of outstanding check-up fee|2026-02-19|Thu Feb 19 11:00:00 2026
+52|18|Follow-up Call|Called to check on treatment progress|2026-02-07|Sat Feb  7 10:00:00 2026
+53|18|Clinic Visit|Patient came in for treatment session|2026-02-14|Sat Feb 14 08:30:00 2026
+54|18|Appointment Reminder|Reminded of next treatment session|2026-02-21|Sat Feb 21 09:00:00 2026
+55|19|Clinic Visit|Patient came in for senior checkup|2026-02-09|Mon Feb  9 08:30:00 2026
+56|19|Lab Results Notification|Informed of senior checkup results|2026-02-16|Mon Feb 16 11:00:00 2026
+57|19|Follow-up Call|Called to check on medication adherence|2026-02-23|Mon Feb 23 10:00:00 2026
+58|20|Appointment Reminder|Reminded of upcoming consultation|2026-02-11|Wed Feb 11 09:00:00 2026
+59|20|Clinic Visit|Patient came in for regular consultation|2026-02-18|Wed Feb 18 08:30:00 2026
+60|20|Follow-up Call|Called to check on consultation follow-up|2026-02-25|Wed Feb 25 10:00:00 2026
