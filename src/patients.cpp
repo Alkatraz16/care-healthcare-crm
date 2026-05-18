@@ -12,20 +12,6 @@
 
 std::vector<Patient> patients;
 
-void printPatientManagementMenu() {
-    system("cls");
-
-    std::cout << "=================================\n";
-    std::cout << "       PATIENT MANAGEMENT\n";
-    std::cout << "=================================\n";
-    std::cout << "1. Add new patient\n";
-    std::cout << "2. View patient list\n";
-    std::cout << "3. Update patient information\n";
-    std::cout << "4. Delete patient record\n";
-    std::cout << "5. Search patient by ID or name\n";
-    std::cout << "6. Exit to main menu\n";
-}
-
 void addPatientRecords() {
     Patient p;
 
