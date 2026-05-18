@@ -76,10 +76,12 @@ void staffLogin() {
         std::string username, password;
 
         std::cout << "Username: ";
-        std::cin >> username;
+        std::getline(std::cin, username);
 
         if (username == "cancel") {
             std::cout << "Login cancelled.\n";
+            std::cout << "Press enter to continue...";
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return;
         }
 
@@ -127,10 +129,12 @@ void patientLogin() {
         std::string username, password;
 
         std::cout << "Username: ";
-        std::cin >> username;
+        std::getline(std::cin, username);
 
         if (username == "cancel") {
             std::cout << "Login cancelled.\n";
+            std::cout << "Press enter to continue...";
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return;
         }
 
