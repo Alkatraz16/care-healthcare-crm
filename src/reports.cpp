@@ -145,7 +145,7 @@ void waitForEnter() {
 }
 
 void printReportHeader(const std::string& title) {
-	std::cout << "\n====================================\n";
+	std::cout << "====================================\n";
 	std::cout << title << "\n";
 	std::cout << "====================================\n";
 }
@@ -157,7 +157,7 @@ void showTotalSales(const std::vector<ReportTransaction>& transactions) {
 	}
 
 	system("cls");
-	printReportHeader("            TOTAL SALES");
+	std::cout << totalSalesHeader;
 	std::cout << "Total Sales: PHP " << std::fixed << std::setprecision(2) << totalSales << "\n";
 }
 
@@ -178,7 +178,7 @@ void showTopPatientsBySpending(const std::vector<ReportTransaction>& transaction
 			  });
 
 	system("cls");
-	printReportHeader("      TOP PATIENTS BY SPENDING");
+	std::cout << topPatientsHeader;
 
 	if (rankedPatients.empty()) {
 		std::cout << "No transactions found.\n";
@@ -202,7 +202,7 @@ void showTopPatientsBySpending(const std::vector<ReportTransaction>& transaction
 
 void showTransactionCount(const std::vector<ReportTransaction>& transactions) {
 	system("cls");
-	printReportHeader("    TOTAL NUMBER OF TRANSACTIONS");
+	std::cout << totalTransactionsHeader;
 	std::cout << "Total Transactions: " << transactions.size() << "\n";
 }
 
