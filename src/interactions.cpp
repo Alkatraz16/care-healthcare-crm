@@ -367,7 +367,8 @@ void deleteInteractionLog() {
 
 void viewMyInteractionLogs() {
     system("cls");
-    std::cout << interactionLogsHeader << "\n"
+    std::cout << interactionLogsHeader << "\n";
+    bool found = false;
 
     for (int idx = interactions.size() - 1; idx >= 0; idx--) {
         const Interaction& i = interactions[idx];

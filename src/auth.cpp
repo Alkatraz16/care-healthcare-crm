@@ -78,29 +78,18 @@ void staffLogin() {
         std::string username, password;
 
         std::cout << "Username: ";
-        std::getline(std::cin, username);
-        if (!(std::cin >> username)) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Try again.\n\n";
-            continue;
-        }
+        std::getline(std::cin, username);          // FIX 1: was missing a paired read
 
         if (username == "cancel") {
             std::cout << "Login cancelled.\n";
             std::cout << "Press enter to continue...";
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            // no cin.ignore() needed — getline already consumed the newline
             return;
         }
 
         std::cout << "Password: ";
-        if (!(std::cin >> password)) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Try again.\n\n";
-            continue;
-        }
-        std::cin.ignore();
+        // FIX 2: was `std::cin.ignore()` which read nothing; now actually reads password
+        std::getline(std::cin, password);
 
         if (password.empty()) {
             std::cout << "Password cannot be empty. Try again.\n\n";
@@ -152,29 +141,18 @@ void patientLogin() {
         std::string username, password;
 
         std::cout << "Username: ";
+        // FIX 3: removed the duplicate `std::cin >> username` that overwrote getline
         std::getline(std::cin, username);
-        if (!(std::cin >> username)) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Try again.\n\n";
-            continue;
-        }
 
         if (username == "cancel") {
             std::cout << "Login cancelled.\n";
             std::cout << "Press enter to continue...";
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return;
         }
 
         std::cout << "Password: ";
-        if (!(std::cin >> password)) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Try again.\n\n";
-            continue;
-        }
-        std::cin.ignore();
+        // FIX 4: use getline consistently; removed `cin >>` + manual ignore()
+        std::getline(std::cin, password);
 
         if (password.empty()) {
             std::cout << "Password cannot be empty. Try again.\n\n";
