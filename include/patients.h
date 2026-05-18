@@ -36,5 +36,6 @@ void searchPatientRecord();
 void searchPatientById();
 void searchPatientByName();
 void viewMyRecords();
+void printPatient(const Patient& p);
 
 #endif

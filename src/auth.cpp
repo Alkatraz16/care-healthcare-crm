@@ -1,11 +1,13 @@
 #include "../include/auth.h"
 #include "../include/patients.h"
 #include "../include/database.h"
+#include "../include/ui.h"
 
 #include <iostream>
 #include <limits>
 #include <stdlib.h>
 #include <functional>
+#include <conio.h>
 #include <sstream>
 
 std::vector<User> users;
@@ -14,39 +16,48 @@ bool isLoggedIn = false;
 bool exitRequested = false;
 
 void login() {
+    int choice;
+    char key;
+    int index = 0;
+    bool pressEnter = false;
+    bool redraw = true;
+
     while (true) {
-        std::cout << "================================================\n";
-        std::cout << "        CLINICAL ACTIVITY RECORDS ENGINE\n";
-        std::cout << "================================================\n";
-        std::cout << "1. Login as Staff\n";
-        std::cout << "2. Login as Patient\n";
-        std::cout << "3. Exit\n";
-        std::cout << ">> ";
-
-        int choice;
-        std::cin >> choice;
-
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Enter 1, 2, or 3.\n\n";
-            continue;
+        if (redraw) {
+            system("cls");
+            std::cout << CARE;
+            std::cout << loginMenuFrames[index];
+            redraw = false;
         }
-        std::cin.ignore();
 
-        switch (choice) {
-            case 1:
-                staffLogin();
-                return;
-            case 2:
-                patientLogin();
-                return;
-            case 3:
-                exitRequested = true;
-                return;
-            default:
-                std::cout << "Invalid input. Enter 1, 2, or 3.\n\n";
-                break;
+        key = _getch();
+
+        if (key == 'w') {
+            index = (index == 0) ? 2 : index - 1;
+            redraw = true;
+        }
+        if (key == 's') {
+            index = (index + 1) % 3;
+            redraw = true;
+        }
+        if (key == '\r') {
+            pressEnter = true;
+            choice = index + 1;
+
+            switch (choice) {
+                case 1:
+                    staffLogin(); 
+                    if (isLoggedIn) return;
+                    break;
+                case 2:
+                    patientLogin();
+                    if (isLoggedIn) return;
+                    break;
+                case 3: 
+                    exitRequested = true;
+                    return;
+            }
+            redraw = true;
         }
     }
 }
@@ -60,15 +71,14 @@ std::string hashPassword(const std::string& password) {
 void staffLogin() {
     system("cls");
 
-    std::cout << "================================\n";
-    std::cout << "         STAFF LOGIN\n";
-    std::cout << "================================\n";
+    std::cout << staffLoginHeader << "\n";
     std::cout << "Enter 'cancel' as username to go back.\n\n";
 
     while (true) {
         std::string username, password;
 
         std::cout << "Username: ";
+        std::getline(std::cin, username);
         if (!(std::cin >> username)) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -78,6 +88,8 @@ void staffLogin() {
 
         if (username == "cancel") {
             std::cout << "Login cancelled.\n";
+            std::cout << "Press enter to continue...";
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return;
         }
 
@@ -133,15 +145,14 @@ void staffLogin() {
 void patientLogin() {
     system("cls");
 
-    std::cout << "================================\n";
-    std::cout << "        PATIENT LOGIN\n";
-    std::cout << "================================\n";
+    std::cout << patientLoginHeader << "\n";
     std::cout << "Enter 'cancel' as username to go back.\n\n";
 
     while (true) {
         std::string username, password;
 
         std::cout << "Username: ";
+        std::getline(std::cin, username);
         if (!(std::cin >> username)) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -151,6 +162,8 @@ void patientLogin() {
 
         if (username == "cancel") {
             std::cout << "Login cancelled.\n";
+            std::cout << "Press enter to continue...";
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return;
         }
 
@@ -198,12 +211,6 @@ void patientLogin() {
                     break;
                 }
             }
-
-            std::cout << "================================\n";
-            std::cout << "     WELCOME, " << patientName << "\n";
-            std::cout << "================================\n";
-            std::cout << "Press enter to continue...";
-            std::cin.get();
             return;
         }
 

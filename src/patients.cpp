@@ -1,6 +1,7 @@
 #include "../include/patients.h"
 #include "../include/database.h"
 #include "../include/auth.h"
+#include "../include/ui.h"
 
 #include <iostream>
 #include <stdlib.h>
@@ -9,6 +10,7 @@
 #include <sstream>
 #include <iomanip>
 #include <limits>
+#include <conio.h>
 #include <algorithm>
 
 std::vector<Patient> patients;
@@ -46,12 +48,10 @@ void addPatientRecords() {
     Patient p;
 
     system("cls");
-    std::cout << "==================================\n";
-    std::cout << "           ADD PATIENT\n";
-    std::cout << "==================================\n";
 
-    p.id = getNextId(patients, [](const Patient& px){ return px.id; });
-    std::cout << "Assigned Patient ID: " << p.id << "\n";
+    std::cout << addPatientHeader << "\n";
+
+    p.id = getNextId(patients, [](const Patient& px) { return px.id; }); 
 
     // name — must not be empty
     while (true) {
@@ -162,6 +162,7 @@ void loadPatientRecords() {
 void viewPatientRecords() {
     system("cls");
 
+    std::cout << "═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════\n";
     if (patients.empty()) {
         std::cout << "No patient records found.\n";
         std::cout << "Press enter to continue...";
@@ -172,35 +173,33 @@ void viewPatientRecords() {
 
     std::cout << std::left
               << std::setw(10) << "ID"
-              << std::setw(25) << "Name"
+              << std::setw(40) << "Name"
               << std::setw(20) << "Phone"
               << std::setw(35) << "Email"
               << std::setw(10) << "Age"
               << std::setw(40) << "Address" << "\n";
-    std::cout << std::string(140, '-') << "\n";
-
-    for (const Patient& p : patients) {
+    std::cout << "═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════\n";
+              
+    for (Patient& p : patients) {
         std::cout << std::left
                   << std::setw(10) << p.id
-                  << std::setw(25) << p.name
+                  << std::setw(40) << p.name
                   << std::setw(20) << p.phone
                   << std::setw(35) << p.email
                   << std::setw(10) << p.age
                   << std::setw(40) << p.address << "\n";
     }
-
-    std::cout << "\nPress enter to continue...";
-    std::cin.ignore();
-    std::cin.get();
+    std::cout << "═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════\n";
+    std::cout << "Press enter to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 // ─── UPDATE ───────────────────────────────────────────────────────────────────
 
 void updatePatientRecord() {
     system("cls");
-    std::cout << "===================================\n";
-    std::cout << "       UPDATE PATIENT RECORD\n";
-    std::cout << "===================================\n";
+
+    std::cout << updatePatientHeader << "\n";
 
     if (patients.empty()) {
         std::cout << "No patient records found.\n";
@@ -237,14 +236,13 @@ void showUpdateMenu(Patient& p) {
 
     do {
         system("cls");
-        std::cout << "===================================\n";
-        std::cout << "    CURRENT PATIENT INFORMATION\n";
-        std::cout << "===================================\n\n";
-        std::cout << "Patient ID: " << p.id      << "\n";
-        std::cout << "1. Name:    " << p.name    << "\n";
-        std::cout << "2. Email:   " << p.email   << "\n";
-        std::cout << "3. Phone:   " << p.phone   << "\n";
-        std::cout << "4. Age:     " << p.age     << "\n";
+
+        std::cout << currentPatientInformationHeader << "\n";
+        std::cout << "Patient ID: " << p.id << "\n";
+        std::cout << "1. Name: " << p.name << "\n";
+        std::cout << "2. Email: " << p.email << "\n";
+        std::cout << "3. Phone: " << p.phone << "\n";
+        std::cout << "4. Age: " << p.age << "\n";
         std::cout << "5. Address: " << p.address << "\n\n";
         std::cout << "6. Save Changes\n";
         std::cout << "7. Cancel\n\n";
@@ -385,9 +383,8 @@ void updateAddress(Patient& p) {
 
 void deletePatientRecord() {
     system("cls");
-    std::cout << "===================================\n";
-    std::cout << "       DELETE PATIENT RECORD\n";
-    std::cout << "===================================\n";
+    
+    std::cout << deletePatientHeader << "\n";
 
     if (patients.empty()) {
         std::cout << "No patient records found.\n";
@@ -406,15 +403,20 @@ void deletePatientRecord() {
     }
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    bool found = false;
-    for (const Patient& p : patients) {
-        if (p.id != id) continue;
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    std::cin.ignore();
+
+    for (Patient& p : patients) {
+        if (p.id != id) {
+            continue;
+        }
 
         found = true;
         system("cls");
-        std::cout << "===================================\n";
-        std::cout << "       PATIENT TO BE DELETED\n";
-        std::cout << "===================================\n";
+        std::cout << patientDeletingHeader << "\n";
         std::cout << "ID:      " << p.id      << "\n";
         std::cout << "Name:    " << p.name    << "\n";
         std::cout << "Phone:   " << p.phone   << "\n";
@@ -454,44 +456,60 @@ void deletePatientRecord() {
     std::cin.get();
 }
 
-// ─── SEARCH ───────────────────────────────────────────────────────────────────
+void printPatient(const Patient& p) {
+    std::cout << patientInformationHeader << "\n";
+    std::cout << "ID:      " << p.id      << "\n";
+    std::cout << "Name:    " << p.name    << "\n";
+    std::cout << "Phone:   " << p.phone   << "\n";
+    std::cout << "Email:   " << p.email   << "\n";
+    std::cout << "Age:     " << p.age     << "\n";
+    std::cout << "Address: " << p.address << "\n\n";
+}
+
 
 void searchPatientRecord() {
-    system("cls");
-    std::cout << "==================================\n";
-    std::cout << "          SEARCH PATIENT\n";
-    std::cout << "==================================\n";
-    std::cout << "1. Search by ID\n";
-    std::cout << "2. Search by Name\n";
-    std::cout << "3. Cancel\n";
+    int choice;
+    char key;
+    int index = 0;
+    bool pressEnter = false;
+    bool redraw = true;
 
     while (true) {
-        std::cout << ">> ";
-        int choice;
-
-        if (!(std::cin >> choice)) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Enter 1, 2, or 3.\n";
-            continue;
+        if (redraw) {
+            system("cls");
+            std::cout << searchPatientHeader;
+            std::cout << searchMenuFrames[index] << "\n";
+            redraw = false;
         }
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        if (choice == 1) {
-            searchPatientById();
-            break;
-        } else if (choice == 2) {
-            searchPatientByName();
-            break;
-        } else if (choice == 3) {
-            return;
-        } else {
-            std::cout << "Invalid input. Enter 1, 2, or 3.\n";
+        key = _getch();
+
+        if (key == 'w') {
+            index = (index == 0) ? 2 : index - 1;
+            redraw = true;
+        }
+        if (key == 's') {
+            index = (index + 1) % 3;
+            redraw = true;
+        }
+        if (key == '\r') {
+            pressEnter = true;
+            choice = index + 1;
+            switch (choice) {
+                case 1:
+                    searchPatientById();
+                    break;
+                case 2:                
+                    searchPatientByName();
+                    break;
+                case 3:
+                    return;
+                    break;
+            }
+            redraw = true;
         }
     }
-
-    std::cout << "Press enter to continue...";
-    std::cin.get();
 }
 
 void searchPatientById() {
@@ -508,19 +526,18 @@ void searchPatientById() {
         if (p.id != id) continue;
 
         system("cls");
-        std::cout << "===================================\n";
-        std::cout << "        PATIENT INFORMATION\n";
-        std::cout << "===================================\n";
-        std::cout << "ID:      " << p.id      << "\n";
-        std::cout << "Name:    " << p.name    << "\n";
-        std::cout << "Phone:   " << p.phone   << "\n";
-        std::cout << "Email:   " << p.email   << "\n";
-        std::cout << "Age:     " << p.age     << "\n";
-        std::cout << "Address: " << p.address << "\n";
+        printPatient(p);
+    }
+
+    if (!found) {
+        std::cout << "Patient ID not found.\n";
+        std::cout << "Press enter to continue...";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return;
     }
 
-    std::cout << "Patient ID " << id << " not found.\n";
+    std::cout << "Press enter to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 void searchPatientByName() {
@@ -540,19 +557,13 @@ void searchPatientByName() {
         if (!containsIgnoreCase(p.name, name)) continue;  // ← case insensitive now
 
         found = true;
-        std::cout << "===================================\n";
-        std::cout << "        PATIENT INFORMATION\n";
-        std::cout << "===================================\n";
-        std::cout << "ID:      " << p.id      << "\n";
-        std::cout << "Name:    " << p.name    << "\n";
-        std::cout << "Phone:   " << p.phone   << "\n";
-        std::cout << "Email:   " << p.email   << "\n";
-        std::cout << "Age:     " << p.age     << "\n";
-        std::cout << "Address: " << p.address << "\n\n";
+        printPatient(p);
     }
 
-    if (!found)
-        std::cout << "No patients found matching '" << name << "'.\n";
+    if (!found) std::cout << "No patients found.\n";
+    
+    std::cout << "Press enter to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 // ─── PATIENT VIEW ─────────────────────────────────────────────────────────────

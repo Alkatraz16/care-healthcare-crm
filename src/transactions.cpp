@@ -2,15 +2,17 @@
 #include "../include/database.h"
 #include "../include/auth.h"
 #include "../include/patients.h"
+#include "../include/ui.h"
 
 #include <iostream>
 #include <iomanip>
 #include <limits>
 #include <algorithm>
+#include <conio.h>
 
 std::vector<Transaction> transactions;
 
-static const std::string TRANSACTIONS_FILE = "transactions.csv";
+static const std::string TRANSACTIONS_FILE = "data/transactions.csv";
 
 //Serialization
 std::string serializeTransaction(const Transaction& t) {
@@ -65,7 +67,7 @@ static std::string getPatientName(int patientId) {
 }
 
 static void printTransaction(const Transaction& t) {
-    std::cout << "Transaction ID : " << t.id          << "\n";
+    std::cout << "Assigned Transaction ID - " << t.id << "\n";
     std::cout << "Patient ID     : " << t.patientId   << "\n";
     std::cout << "Patient Name   : " << getPatientName(t.patientId) << "\n";
     std::cout << "Date           : " << t.date        << "\n";
@@ -81,13 +83,16 @@ void viewAllTransactionHistory() {
         return;
     }
 
-    std::cout << "\n=============================" << "\n";
-    std::cout << "      ALL TRANSACTION HISTORY" << "\n";
-    std::cout << "=============================\n";
+    system("cls");
+
+    std::cout << transactionHistoryHeader << "\n";
 
     for (const Transaction& t : transactions) {
         printTransaction(t);
     }
+    
+    std::cout << "Press enter to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 // VIEW BY PATIENT
@@ -112,9 +117,9 @@ void viewTransactionsByPatient() {
         return;
     }
 
-    std::cout << "\n=============================\n";
-    std::cout << "  TRANSACTIONS FOR " << name << "\n";
-    std::cout << "=============================\n";
+    system("cls");
+
+    std::cout << patientTransactionsHeader << "\n";
 
     bool found = false;
     float total = 0;
@@ -132,6 +137,9 @@ void viewTransactionsByPatient() {
     else
         std::cout << "Total Spent: PHP " << std::fixed
                   << std::setprecision(2) << total << "\n";
+    
+    std::cout << "Press enter to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 // SEARCH
@@ -180,60 +188,63 @@ void searchTransactions() {
 
 // MENU
 void transactionManagement() {
-     loadTransactionRecords();
-
     int choice;
-    do {
-        std::cout << "=============================\n";
-        std::cout << "    TRANSACTION MANAGEMENT\n";
-        std::cout << "=============================\n";
-        std::cout << "1. Add Transaction\n";
-        std::cout << "2. View All Transactions\n";
-        std::cout << "3. View Transactions per Patient\n";
-        std::cout << "4. Search Transactions\n";
-        std::cout << "5. Edit Transaction\n";
-        std::cout << "6. Delete Transaction\n";
-        std::cout << "7. Back\n";
-        std::cout << "Enter choice: ";
+    char key;
+    int index = 0;
+    bool pressEnter = false;
+    bool redraw = true;
 
-        std::cin >> choice;
-        while (std::cin.fail()) {
-            std::cout << "Invalid input. Enter a number: ";
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cin >> choice;
+    while (true) {
+        if (redraw) {
+            system("cls");
+            std::cout << transactionManagementModuleHeader;
+            std::cout << transactionMenuFrames[index] << "\n";
+            std::cout << "Logged in as: " << currentUser.username << "(" << currentUser.role << ")\n";
+            redraw = false;
         }
 
-        switch (choice) {
-            case 1:
-                addTransaction(transactions);
-                saveTransactionRecords();
-                break;
-            case 2:
-                viewAllTransactionHistory();
-                break;
-            case 3:
-                viewTransactionsByPatient(); 
-                break;
-            case 4:
-                searchTransactions(); 
-                break;
-            case 5:
-                editTransaction(transactions);
-                saveTransactionRecords();
-                break;
-            case 6:
-                deleteTransaction(transactions);
-                saveTransactionRecords();
-                break;
-            case 7:
-                std::cout << "Returning to main menu...\n";
-                break;
-            default:
-                std::cout << "Invalid option! Try again.\n";
-                break;
+        key = _getch();
+
+        if (key == 'w') {
+            index = (index == 0) ? 6 : index - 1;
+            redraw = true;
         }
-    } while (choice != 7);
+        if (key == 's') {
+            index = (index + 1) % 7;
+            redraw = true;
+        }
+        if (key == '\r') {
+            pressEnter = true;
+            choice = index + 1;
+            switch (choice) {
+                case 1:
+                    addTransaction(transactions);
+                    saveTransactionRecords();
+                    break;
+                case 2:
+                    viewAllTransactionHistory();
+                    break;
+                case 3:
+                    viewTransactionsByPatient(); 
+                    break;
+                case 4:
+                    searchTransactions(); 
+                    break;
+                case 5:
+                    editTransaction(transactions);
+                    saveTransactionRecords();
+                    break;
+                case 6:
+                    deleteTransaction(transactions);
+                    saveTransactionRecords();
+                    break;
+                case 7:
+                    return;
+                    break;
+            }
+            redraw = true;
+        }
+    }
 }
 
 // ADD TRANSACTION
@@ -241,9 +252,9 @@ void addTransaction(std::vector<Transaction>& transactions) {
     Transaction t;
     t.id = getNextId (transactions, [](const Transaction& tx) { return tx.id; }); 
 
-    std::cout << "\n=============================\n";
-    std::cout << "      ADD TRANSACTION\n";
-    std::cout << "=============================\n";
+    system("cls");
+
+    std::cout << addTransactionHeader << "\n";
     std::cout << "Transaction ID: " << t.id << "\n";
 
     std::cout << "Enter Patient ID: ";
@@ -254,7 +265,7 @@ void addTransaction(std::vector<Transaction>& transactions) {
     }
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    std::cout << "Enter Date (MM/DD/YYYY): ";
+    std::cout << "Enter Date (YYYY/MM/DD): ";
     std::getline(std::cin, t.date);
 
     std::cout << "Enter Amount: ";
@@ -282,9 +293,9 @@ void viewTransactions(const std::vector<Transaction>& transactions) {
         return;
     }
 
-    std::cout << "\n=============================\n";
-    std::cout << "      ALL TRANSACTIONS\n";
-    std::cout << "=============================\n";
+    system("cls");
+
+    std::cout << viewTransactionsHeader << "\n"
 
     for (const Transaction& t : transactions) {
         printTransaction(t);
@@ -325,6 +336,8 @@ void editTransaction(std::vector<Transaction>& transactions) {
 
     for (Transaction& t : transactions) {
         if (t.id != id) continue;
+
+        system("cls");
 
         std::cout << "\n--- Current values ---\n";
         std::cout << "Patient ID   : " << t.patientId   << "\n";
@@ -372,6 +385,9 @@ void editTransaction(std::vector<Transaction>& transactions) {
         if (!input.empty()) t.description = input;
 
         std::cout << "\nTransaction updated successfully.\n";
+        
+        std::cout << "Press enter to continue...";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return;
     }
 
@@ -415,13 +431,14 @@ void deleteTransaction(std::vector<Transaction>& transactions) {
     } else {
         std::cout << "\nDeletion cancelled.\n";
     }
+    
+    std::cout << "Press enter to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 void viewMyTransactions() {
     system("cls");
-    std::cout << "=============================\n";
-    std::cout << "      MY TRANSACTIONS\n";
-    std::cout << "=============================\n\n";
+    std::cout << patientTransactionsHeader << "\n";
 
     bool found = false;
     for (Transaction& t : transactions) {
