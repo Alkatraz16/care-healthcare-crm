@@ -113,6 +113,7 @@ void adminMenu() {
                     return;
                     break;
             }
+            redraw = true;
         }
     }
 }
@@ -163,6 +164,7 @@ void staffMenu() {
                     return;
                     break;
             }
+            redraw = true;
         }
     }
 }
@@ -210,6 +212,7 @@ void patientMenu() {
                     return;
                     break;
             }
+            redraw = true;
         }
     }
 }
@@ -264,6 +267,7 @@ void patientManagementModule() {
                     return;
                     break;
             }
+            redraw = true;
         }
     }
 }
