@@ -2,6 +2,7 @@
 #include "../include/patients.h"
 #include "../include/database.h"
 #include "../include/auth.h"
+#include "../include/ui.h"
 
 #include <iostream>
 #include <stdlib.h>
@@ -9,6 +10,7 @@
 #include <limits>
 #include <chrono>
 #include <ctime>
+#include <conio.h>
 
 std::vector<Interaction> interactions;
 
@@ -54,7 +56,7 @@ void addInteractionRecord() {
         if (redraw) {
             system("cls");
             std::cout << selectInteractionTypeHeader;
-            std::cout << interactionTypeFrames[index] << "\n";=
+            std::cout << interactionTypeFrames[index] << "\n";
             redraw = false;
         }
 
@@ -304,21 +306,17 @@ void deleteInteractionLog() {
 
 void viewMyInteractionLogs() {
     system("cls");
-    std::cout << interactionLogsHeader << "\n"
+    std::cout << interactionLogsHeader << "\n";
 
-    bool found = false;
     for (int idx = interactions.size() - 1; idx >= 0; idx--) {
         Interaction& i = interactions[idx];
         if (i.patientId != currentUser.linkedPatientId) continue;
 
-        found = true;
         std::cout << "[" << i.id << "] " << i.type << "\n";
         std::cout << "    Date      : " << i.date      << "\n";
         std::cout << "    Note      : " << i.note      << "\n";
         std::cout << "    Logged at : " << i.loggedAt  << "\n\n";
     }
-
-    if (!found) std::cout << "No interaction logs found.\n";
 
     std::cout << "Press enter to continue...";
     std::cin.ignore();

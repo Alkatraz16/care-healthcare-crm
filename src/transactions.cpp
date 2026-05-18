@@ -295,7 +295,7 @@ void viewTransactions(const std::vector<Transaction>& transactions) {
 
     system("cls");
 
-    std::cout << viewTransactionsHeader << "\n"
+    std::cout << viewTransactionsHeader << "\n";
 
     for (const Transaction& t : transactions) {
         printTransaction(t);
