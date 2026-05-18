@@ -85,9 +85,7 @@ void viewAllTransactionHistory() {
 
     system("cls");
 
-    std::cout << "=============================\n";
-    std::cout << "   ALL TRANSACTION HISTORY\n";
-    std::cout << "=============================\n";
+    std::cout << transactionHistoryHeader << "\n";
 
     for (const Transaction& t : transactions) {
         printTransaction(t);
@@ -121,9 +119,7 @@ void viewTransactionsByPatient() {
 
     system("cls");
 
-    std::cout << "=============================\n";
-    std::cout << "    PATIENTS TRANSACTIONS\n";
-    std::cout << "=============================\n";
+    std::cout << patientTransactionsHeader << "\n";
 
     bool found = false;
     float total = 0;
@@ -258,9 +254,7 @@ void addTransaction(std::vector<Transaction>& transactions) {
 
     system("cls");
 
-    std::cout << "=============================\n";
-    std::cout << "      ADD TRANSACTION\n";
-    std::cout << "=============================\n";
+    std::cout << addTransactionHeader << "\n";
     std::cout << "Transaction ID: " << t.id << "\n";
 
     std::cout << "Enter Patient ID: ";
@@ -299,9 +293,9 @@ void viewTransactions(const std::vector<Transaction>& transactions) {
         return;
     }
 
-    std::cout << "\n=============================\n";
-    std::cout << "      ALL TRANSACTIONS\n";
-    std::cout << "=============================\n";
+    system("cls");
+
+    std::cout << viewTransactionsHeader << "\n"
 
     for (const Transaction& t : transactions) {
         printTransaction(t);
@@ -444,9 +438,7 @@ void deleteTransaction(std::vector<Transaction>& transactions) {
 
 void viewMyTransactions() {
     system("cls");
-    std::cout << "=============================\n";
-    std::cout << "      MY TRANSACTIONS\n";
-    std::cout << "=============================\n\n";
+    std::cout << patientTransactionsHeader << "\n";
 
     bool found = false;
     for (Transaction& t : transactions) {
