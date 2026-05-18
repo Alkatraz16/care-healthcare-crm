@@ -1252,7 +1252,7 @@ inline std::string interactionTypeFrames[9] = {
   ┗━┫    ┃  ┣━┫┃┗┫┃  ┣╸ ┃                                                   
   ┗━┛╹   ┗━╸╹ ╹╹ ╹┗━╸┗━╸┗━╸                                                 
   )",
-}
+};
 
 inline std::string interactionLogsHeader =
   R"(

@@ -383,6 +383,7 @@ void updateAddress(Patient& p) {
 
 void deletePatientRecord() {
     system("cls");
+    bool found = false;
     
     std::cout << deletePatientHeader << "\n";
 
@@ -515,6 +516,7 @@ void searchPatientRecord() {
 void searchPatientById() {
     std::cout << "Enter Patient ID: ";
     int id;
+    bool found = false;
     while (!(std::cin >> id)) {
         std::cout << "Invalid input. Enter a number: ";
         std::cin.clear();
