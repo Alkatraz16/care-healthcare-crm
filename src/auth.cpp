@@ -190,7 +190,7 @@ void seedAdminAccount() {
 
 void seedStaffAccount() {
     User staff;
-    staff.id              = 1;
+    staff.id              = 2;
     staff.username        = "staff";
     staff.passwordHash    = hashPassword("staff123");
     staff.role            = "staff";
@@ -202,7 +202,7 @@ void seedStaffAccount() {
 
 void seedPatientAccount() {
     User patient;
-    patient.id              = 1;
+    patient.id              = 3;
     patient.username        = "patient";
     patient.passwordHash    = hashPassword("patient123");
     patient.role            = "patient";

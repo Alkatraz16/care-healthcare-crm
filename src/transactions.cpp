@@ -184,6 +184,9 @@ void searchTransactions() {
 
     if (!found)
         std::cout << "No matching transactions found.\n";
+    
+    std::cout << "Press enter to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 // MENU
