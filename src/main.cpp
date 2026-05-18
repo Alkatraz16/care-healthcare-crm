@@ -28,6 +28,7 @@ int main() {
     loadUsers();
     loadPatientRecords();
     loadInteractionLogs();
+    loadTransactionRecords();
 
     if (users.empty()) {
         seedAdminAccount();
@@ -274,36 +275,51 @@ void patientManagementModule() {
 
 void interactionsModule() {
     int choice;
+    char key;
+    int index = 0;
+    bool pressEnter = false;
+    bool redraw = true;
 
-    do {
-        printInteractionsMenu();
-
-        std::cin >> choice;
-
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while (true) {
+        if (redraw) {
+            system("cls");
+            std::cout << interactionManagementModuleHeader;
+            std::cout << interactionManagementMenuFrames[index] << "\n";
+            std::cout << "Logged in as: " << currentUser.username << "(" << currentUser.role << ")\n";
+            redraw = false;
         }
 
-        switch (choice) {
-            case 1:
-                addInteractionRecord();
-                break;
-            case 2:
-                viewInteractionLogs();
-                break;
-            case 3:
-                viewLogsByPatient();
-                break;
-            case 4:
-                std::cout << "This is delete logs.\n";
-                break;
-            case 5:
-                std::cout << "Going back to main menu...\n";
-                break;
-            default:
-                std::cout << "Invalid option! Try again. (1-5)\n";
-                break;
+        key = _getch();
+
+        if (key == 'w') {
+            index = (index == 0) ? 4 : index - 1;
+            redraw = true;
         }
-    } while (choice != 5);
+        if (key == 's') {
+            index = (index + 1) % 5;
+            redraw = true;
+        }
+        if (key == '\r') {
+            pressEnter = true;
+            choice = index + 1;
+            switch (choice) {
+                case 1:
+                    addInteractionRecord();
+                    break;
+                case 2:
+                    viewInteractionLogs();
+                    break;
+                case 3:
+                    viewLogsByPatient();
+                    break;
+                case 4:
+                    deleteInteractionLog();
+                    break;
+                case 5:
+                    return;
+                    break;
+            }
+            redraw = true;
+        }
+    }
 }
