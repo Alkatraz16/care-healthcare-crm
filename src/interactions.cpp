@@ -10,9 +10,36 @@
 #include <limits>
 #include <chrono>
 #include <ctime>
+#include <algorithm>
+#include <sstream>
 #include <conio.h>
 
 std::vector<Interaction> interactions;
+
+//helpers
+
+// to validate (YYYY-MM-DD) format
+static bool isValidDate(const std::string& date) {
+    if (date.length() != 10)        return false;
+    if (date[4] != '-' || date[7] != '-') return false;
+
+    for (int i = 0; i < 10; i++) {
+        if (i == 4 || i == 7) continue;
+        if (!std::isdigit(date[i])) return false;
+    }
+
+    int year  = std::stoi(date.substr(0, 4));
+    int month = std::stoi(date.substr(5, 2));
+    int day   = std::stoi(date.substr(8, 2));
+
+    if (year < 1900)        return false;
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31)     return false;
+
+    return true;
+}
+
+// add
 
 void addInteractionRecord() {
     Interaction i;
@@ -21,29 +48,27 @@ void addInteractionRecord() {
 
     std::cout << addInteractionHeader;
 
-    std::cout << "Enter Patient ID: ";
-    std::cin >> i.patientId;
-    if (std::cin.fail()) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-    std::cin.ignore();
-
-
-    bool found = false;
-
-    for (Patient& p : patients) {
-        if (p.id == i.patientId) { 
-            found = true; 
-            break; 
+    // patient ID
+    while (true) {
+        std::cout << "Enter Patient ID: ";
+        if (!(std::cin >> i.patientId)) {
+            std::cout << "Invalid input. Enter a number.\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
         }
-    }
-
-    if (!found) {
-        std::cout << "Patient ID not found.\n";
-        std::cout << "Press enter to continue...";
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        return;
+
+        bool found = false;
+        for (const Patient& p : patients) {
+            if (p.id == i.patientId) { found = true; break; }
+        }
+
+        if (!found) {
+            std::cout << "Patient ID " << i.patientId << " not found. Try again.\n";
+            continue;
+        }
+        break;
     }
 
     int choice;
@@ -89,56 +114,81 @@ void addInteractionRecord() {
         }
     }
 
-    std::cout << "Enter Note: ";
-    std::getline(std::cin, i.note);
+    while (true) {
+        std::cout << "Enter Note: ";
+        std::getline(std::cin, i.note);
+        if (i.note.empty()) {
+            std::cout << "Note cannot be empty.\n";
+            continue;
+        }
+        break;
+    }
 
-    std::cout << "Enter Interaction Date (YYYY-MM-DD): ";
-    std::getline(std::cin, i.date);
+    // date )YYYY-MM-DD) format
+    while (true) {
+        std::cout << "Enter Interaction Date (YYYY-MM-DD): ";
+        std::getline(std::cin, i.date);
+        if (!isValidDate(i.date)) {
+            std::cout << "Invalid date format. Use YYYY-MM-DD.\n";
+            continue;
+        }
+        break;
+    }
 
     i.loggedAt = getCurrentTimestamp();
-    i.id = getNextId(interactions, [](const Interaction& x) { return x.id; });
+    i.id = getNextId(interactions, [](const Interaction& x){ return x.id; });
 
     interactions.push_back(i);
-
     saveInteractionLogs();
 
-    std::cout << "Interaction logged successfully!\n";
+    std::cout << "\nInteraction logged successfully.\n";
     std::cout << "Press enter to continue...";
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.get();
 }
 
+// tiimetsamp
+
 std::string getCurrentTimestamp() {
-    auto end = std::chrono::system_clock::now();
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-    std::string timestamp = std::ctime(&end_time);
-    if (!timestamp.empty() && timestamp.back() == '\n') {
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+    std::string timestamp = std::ctime(&now_time);
+    if (!timestamp.empty() && timestamp.back() == '\n')
         timestamp.pop_back();
-    }
     return timestamp;
 }
 
+// serialization
+
 std::string serializeInteractionRecord(const Interaction& i) {
-    return std::to_string(i.id) + "|" + std::to_string(i.patientId) + "|" + i.type + "|" + i.note + "|" + i.date + "|" + i.loggedAt;
+    return std::to_string(i.id)        + "|" +
+           std::to_string(i.patientId) + "|" +
+           i.type                      + "|" +
+           i.note                      + "|" +
+           i.date                      + "|" +
+           i.loggedAt;
 }
 
 Interaction deserializeInteractionRecord(const std::string& line) {
     Interaction i;
     std::string id, patientId;
-
     std::stringstream ss(line);
 
-    std::getline(ss, id, '|');
-    std::getline(ss, patientId, '|');
-    std::getline(ss, i.type, '|');
-    std::getline(ss, i.note, '|');
-    std::getline(ss, i.date, '|');
-    std::getline(ss, i.loggedAt, '\n');
-
-    i.id = std::stoi(id);
-    i.patientId = std::stoi(patientId);
+    try {
+        std::getline(ss, id,        '|'); i.id        = std::stoi(id);
+        std::getline(ss, patientId, '|'); i.patientId = std::stoi(patientId);
+        std::getline(ss, i.type,    '|');
+        std::getline(ss, i.note,    '|');
+        std::getline(ss, i.date,    '|');
+        std::getline(ss, i.loggedAt);
+    } catch (...) {
+        std::cerr << "Warning: Malformed interaction record skipped.\n";
+        i.id = -1;  // sentinel
+    }
 
     return i;
 }
+
+// persistence
 
 void saveInteractionLogs() {
     saveRecords<Interaction>("data/interactions.csv", interactions, serializeInteractionRecord);
@@ -146,7 +196,16 @@ void saveInteractionLogs() {
 
 void loadInteractionLogs() {
     loadRecords<Interaction>("data/interactions.csv", interactions, deserializeInteractionRecord);
+
+    // remove malformed records
+    interactions.erase(
+        std::remove_if(interactions.begin(), interactions.end(),
+            [](const Interaction& i){ return i.id == -1; }),
+        interactions.end()
+    );
 }
+
+// view all
 
 void viewInteractionLogs() {
     system("cls");
@@ -162,12 +221,12 @@ void viewInteractionLogs() {
     }
 
     for (int idx = interactions.size() - 1; idx >= 0; idx--) {
-        Interaction& i = interactions[idx];
+        const Interaction& i = interactions[idx];
         std::cout << "[" << i.id << "] " << i.date << " | "
                   << "Patient #" << i.patientId << " | "
                   << i.type << "\n";
-        std::cout << "    Note: " << i.note << "\n";
-        std::cout << "    Logged at: " << i.loggedAt << "\n\n";
+        std::cout << "    Note      : " << i.note      << "\n";
+        std::cout << "    Logged at : " << i.loggedAt  << "\n\n";
     }
 
     std::cout << "Press enter to continue...";
@@ -175,34 +234,33 @@ void viewInteractionLogs() {
     std::cin.get();
 }
 
+// view by patient
+
 void viewLogsByPatient() {
     system("cls");
 
     std::cout << interactionLogsHeader << "\n";
 
-    std::cout << "Enter Patient ID: ";
     int id;
-    std::cin >> id;
-    if (std::cin.fail()) {
-        std::cin.clear();
+    while (true) {
+        std::cout << "Enter Patient ID: ";
+        if (!(std::cin >> id)) {
+            std::cout << "Invalid input. Enter a number.\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Invalid input!\n";
-        std::cout << "Press enter to continue...";
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        return;
+        break;
     }
-    std::cin.ignore();
 
     std::string patientName = "";
-    for (Patient& p : patients) {
-        if (p.id == id) {
-            patientName = p.name;
-            break;
-        }
+    for (const Patient& p : patients) {
+        if (p.id == id) { patientName = p.name; break; }
     }
 
     if (patientName.empty()) {
-        std::cout << "Patient ID not found.\n";
+        std::cout << "Patient ID " << id << " not found.\n";
         std::cout << "Press enter to continue...";
         std::cin.get();
         return;
@@ -214,51 +272,54 @@ void viewLogsByPatient() {
     std::cout << "Patient: " << patientName << "\n";
 
     bool found = false;
-
     for (const Interaction& i : interactions) {
-        if (i.patientId != id) {
-            continue;
-        }
+        if (i.patientId != id) continue;
 
         found = true;
-        std::cout << "[" << i.id << "] " << i.type << "\n";
-        std::cout << "    Date      : " << i.date << "\n";
-        std::cout << "    Note      : " << i.note << "\n";
-        std::cout << "    Logged at : " << i.loggedAt << "\n\n";
+        std::cout << "[" << i.id << "] " << i.type         << "\n";
+        std::cout << "    Date      : " << i.date           << "\n";
+        std::cout << "    Note      : " << i.note           << "\n";
+        std::cout << "    Logged at : " << i.loggedAt       << "\n\n";
     }
 
-    if (!found) {
+    if (!found)
         std::cout << "No interaction logs found for this patient.\n";
-    }
 
     std::cout << "Press enter to continue...";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-void deleteInteractionLog() {
-    int id;
-    bool found = false;
+// delete
 
+void deleteInteractionLog() {
     system("cls");
     
     std::cout << deleteInteractionHeader << "\n";
 
-    std::cout << "Enter Log ID to delete: ";
-    std::cin >> id;
-    if (std::cin.fail()) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Invalid input!\n";
+    if (interactions.empty()) {
+        std::cout << "No interaction logs found.\n";
         std::cout << "Press enter to continue...";
+        std::cin.ignore();
         std::cin.get();
         return;
     }
-    std::cin.ignore();
 
-    for (Interaction& i : interactions) {
-        if (i.id != id) {
+    int id;
+    while (true) {
+        std::cout << "Enter Log ID to delete: ";
+        if (!(std::cin >> id)) {
+            std::cout << "Invalid input. Enter a number.\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
         }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        break;
+    }
+
+    bool found = false;
+    for (const Interaction& i : interactions) {
+        if (i.id != id) continue;
 
         found = true;
         system("cls");
@@ -273,45 +334,46 @@ void deleteInteractionLog() {
     }
 
     if (!found) {
-        std::cout << "Log ID not found.\n";
+        std::cout << "Log ID " << id << " not found.\n";
         std::cout << "Press enter to continue...";
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin.get();
         return;
     }
 
-    char choice;
-    bool valid = false;
+    while (true) {
+        std::cout << "Are you sure you want to delete this log? (Y/N): ";
+        char confirm;
+        std::cin >> confirm;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    do {
-        std::cout << "Are you sure you want to delete this interaction log? (Y/N)\n";
-        std::cout << ">> ";
-        std::cin >> choice;
-        std::cin.ignore();
-        if (choice == 'y' || choice == 'Y') {
-            valid = true;
+        if (confirm == 'y' || confirm == 'Y') {
             deleteRecord(interactions, id);
             saveInteractionLogs();
             std::cout << "Interaction log deleted successfully.\n";
-        } else if (choice == 'n' || choice == 'N') {
-            valid = true;
-            std::cout << "Deletion cancelled...\n";
-        } else {    
-            std::cout << "Invalid input! Please enter Y or N.\n";
+            break;
+        } else if (confirm == 'n' || confirm == 'N') {
+            std::cout << "Deletion cancelled.\n";
+            break;
+        } else {
+            std::cout << "Invalid input. Enter Y or N.\n";
         }
-    } while (!valid);
+    }
 
     std::cout << "Press enter to continue...";
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.get();
 }
+
+// patient view
 
 void viewMyInteractionLogs() {
     system("cls");
-    std::cout << interactionLogsHeader << "\n";
+    std::cout << interactionLogsHeader << "\n"
 
     for (int idx = interactions.size() - 1; idx >= 0; idx--) {
-        Interaction& i = interactions[idx];
+        const Interaction& i = interactions[idx];
         if (i.patientId != currentUser.linkedPatientId) continue;
 
+        found = true;
         std::cout << "[" << i.id << "] " << i.type << "\n";
         std::cout << "    Date      : " << i.date      << "\n";
         std::cout << "    Note      : " << i.note      << "\n";
