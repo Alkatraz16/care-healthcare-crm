@@ -234,11 +234,7 @@ void seedAdminAccount() {
 
 void seedStaffAccount() {
     User staff;
-<<<<<<< HEAD
-    staff.id              = 2;
-=======
     staff.id              = getNextId(users, [](const User& u){ return u.id; });
->>>>>>> 4074fa6d85ff7c3d29f03821000e0bfc2ef1cf96
     staff.username        = "staff";
     staff.passwordHash    = hashPassword("staff123");
     staff.role            = "staff";
@@ -250,11 +246,7 @@ void seedStaffAccount() {
 
 void seedPatientAccount() {
     User patient;
-<<<<<<< HEAD
-    patient.id              = 3;
-=======
     patient.id              = getNextId(users, [](const User& u){ return u.id; });
->>>>>>> 4074fa6d85ff7c3d29f03821000e0bfc2ef1cf96
     patient.username        = "patient";
     patient.passwordHash    = hashPassword("patient123");
     patient.role            = "patient";
