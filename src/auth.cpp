@@ -56,6 +56,7 @@ void login() {
                     exitRequested = true;
                     return;
             }
+            redraw = true;
         }
     }
 }
